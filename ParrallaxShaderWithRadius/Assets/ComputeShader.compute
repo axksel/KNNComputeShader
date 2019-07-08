@@ -1,0 +1,28 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+float a;
+int amountOfObjects;
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+RWStructuredBuffer<int> RD;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+
+	int index =id.x*id.y;
+    // TODO: insert actual code here!
+
+	if (index < amountOfObjects) {
+		RD[index] = 20;
+	}
+
+	/*for (int i = 0; i < amountOfObjects; i++)
+	{
+		RD[i] = 1000;
+	}*/
+
+    Result[id.xy] = float4(a, a, a, 0.0);
+}
