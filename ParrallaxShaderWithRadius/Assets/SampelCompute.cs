@@ -6,27 +6,24 @@ public class SampelCompute : MonoBehaviour
 {
 
     public ComputeShader compute;
-    public RenderTexture result;
     public int amountOfObjects = 50;
     public GameObject objectPrefab;
     public GameObject playerPrefab;
+    public int k =3;
     int kernel;
 
 
 
     public Vector3[] randomPoints;
+    public float[] returnedKNeighbours;
     // Start is called before the first frame update
     void Start()
     {
         randomPoints = new Vector3[amountOfObjects];
+        returnedKNeighbours = new float[k];
 
         InstantiateObjects();
         kernel = compute.FindKernel("CSMain");
-
-        result = new RenderTexture(512, 512, 24);
-        result.enableRandomWrite = true;
-        result.Create();
-
 
        
         compute.SetInt("amountOfObjects", randomPoints.Length);
@@ -36,12 +33,18 @@ public class SampelCompute : MonoBehaviour
         buffer.SetData(randomPoints);
         compute.SetBuffer(kernel,"RP", buffer);
 
-        compute.SetTexture(kernel, "Result", result);
+        var bufferK = new ComputeBuffer(returnedKNeighbours.Length, sizeof(float));
+        bufferK.SetData(returnedKNeighbours);
+        compute.SetBuffer(kernel, "KNeighbours", bufferK);
+
 
         compute.Dispatch(kernel, 512 / 8, 512 / 8, 1);
 
         buffer.GetData(randomPoints);
         buffer.Release();
+
+        bufferK.GetData(returnedKNeighbours);
+        bufferK.Release();
 
 
     }

@@ -1,32 +1,23 @@
-﻿// Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+﻿#pragma kernel CSMain
 
 int amountOfObjects;
 float3 playerPos;
 
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
-RWTexture2D<float4> Result;
-//RWStructuredBuffer<int> RD;
+
 RWStructuredBuffer<float3> RP;
+RWStructuredBuffer<float> KNeighbours;
 
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
 
 	int index =id.x*id.y;
-    // TODO: insert actual code here!
 
 	if (index < amountOfObjects) {
-		RP[index].x =playerPos.x;
-       RP[index].y =playerPos.y;
-       RP[index].z =playerPos.z;
+		KNeighbours[index] =distance(RP[index],playerPos);
+       //RP[index].y =playerPos.y;
+       //RP[index].z =playerPos.z;
 	}
+    
 
-	/*for (int i = 0; i < amountOfObjects; i++)
-	{
-		RD[i] = 1000;
-	}*/
-
-    Result[id.xy] = float4(1, 1, 1, 0.0);
 }
