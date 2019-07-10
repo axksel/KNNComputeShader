@@ -414,17 +414,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21f2f28ce60df5d43a2af6f403c20d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  compute: {fileID: 7200000, guid: 2021ea9a518ff744c863382086ea394f, type: 3}
-  result: {fileID: 0}
-  amountOfObjects: 50
+  distanceCompute: {fileID: 7200000, guid: 2021ea9a518ff744c863382086ea394f, type: 3}
+  returnKNNCompute: {fileID: 7200000, guid: 5e0283d6aa3b34604bef41408d4f6b0f, type: 3}
+  amountOfObjects: 10
   objectPrefab: {fileID: 589237742680566784, guid: 0bcb9f3e01efd4224810759efffaf0bb,
     type: 3}
   playerPrefab: {fileID: 1789492574}
+  k: 3
   randomPoints:
   - {x: 0, y: 0, z: 1.8727951e+31}
   - {x: 4, y: 3, z: 1e-45}
   - {x: 2, y: -2, z: -3.4823358e+25}
   - {x: 6, y: 6, z: 4.5768e-41}
+  returnedDistance: []
+  returnedDistanceCopy: []
+  knn: 
 --- !u!4 &1805300192
 Transform:
   m_ObjectHideFlags: 0

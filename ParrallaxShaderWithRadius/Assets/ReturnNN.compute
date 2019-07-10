@@ -13,7 +13,7 @@ RWStructuredBuffer<int> Knn;
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-   int comparisonIndex =id.x*id.y;
+   int comparisonIndex = id.x + id.y *8;
    int clicks =0;
    
    for (int i = 0; i < amountOfObjects; i++)
@@ -21,11 +21,12 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         if(Distance[i]>=Distance[comparisonIndex] && comparisonIndex !=i){
         clicks++;
         }  
+        
     }
     
     Distance[comparisonIndex]=clicks;
-    if(clicks<=k){
-        Knn[clicks-1]=clicks;
+    if(clicks>=amountOfObjects - k){
+        Knn[amountOfObjects - (clicks+1)] = comparisonIndex;
        }  
     
 }

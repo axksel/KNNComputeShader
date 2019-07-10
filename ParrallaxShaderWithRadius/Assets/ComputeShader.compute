@@ -11,7 +11,7 @@ RWStructuredBuffer<float> Distance;
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
 
-	int index =id.x*id.y;
+	int index =id.x + id.y *8;
 
 	if (index < amountOfObjects) {
 		Distance[index] =distance(RP[index],playerPos);

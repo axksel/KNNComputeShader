@@ -17,6 +17,7 @@ public class SampelCompute : MonoBehaviour
 
     public Vector3[] randomPoints;
     public float[] returnedDistance;
+    public float[] returnedDistanceCopy;
     public int[] knn;
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class SampelCompute : MonoBehaviour
 
         randomPoints = new Vector3[amountOfObjects];
         returnedDistance = new float[amountOfObjects];
+        returnedDistanceCopy = new float[amountOfObjects];
         knn = new int[k];
 
         InstantiateObjects();
@@ -63,6 +65,7 @@ public class SampelCompute : MonoBehaviour
 
         buffer.Release();
         bufferD.GetData(returnedDistance);
+        bufferD.GetData(returnedDistanceCopy);
         bufferD.Release();
 
 
