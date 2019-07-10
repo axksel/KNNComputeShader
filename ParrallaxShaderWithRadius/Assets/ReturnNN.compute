@@ -1,0 +1,31 @@
+﻿
+#pragma kernel CSMain
+
+int amountOfObjects;
+int k;
+
+
+RWStructuredBuffer<float> Distance;
+RWStructuredBuffer<int> Knn;
+
+
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+   int comparisonIndex =id.x*id.y;
+   int clicks =0;
+   
+   for (int i = 0; i < amountOfObjects; i++)
+    {
+        if(Distance[i]>=Distance[comparisonIndex] && comparisonIndex !=i){
+        clicks++;
+        }  
+    }
+    
+    Distance[comparisonIndex]=clicks;
+    if(clicks<=k){
+        Knn[clicks-1]=clicks;
+       }  
+    
+}

@@ -5,7 +5,7 @@ float3 playerPos;
 
 
 RWStructuredBuffer<float3> RP;
-RWStructuredBuffer<float> KNeighbours;
+RWStructuredBuffer<float> Distance;
 
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
@@ -14,9 +14,9 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	int index =id.x*id.y;
 
 	if (index < amountOfObjects) {
-		KNeighbours[index] =distance(RP[index],playerPos);
-       //RP[index].y =playerPos.y;
-       //RP[index].z =playerPos.z;
+		Distance[index] =distance(RP[index],playerPos);
+       
+       
 	}
     
 

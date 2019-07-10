@@ -5,7 +5,8 @@ using UnityEngine;
 public class SampelCompute : MonoBehaviour
 {
 
-    public ComputeShader compute;
+    public ComputeShader distanceCompute;
+    public ComputeShader returnKNNCompute;
     public int amountOfObjects = 50;
     public GameObject objectPrefab;
     public GameObject playerPrefab;
@@ -15,36 +16,19 @@ public class SampelCompute : MonoBehaviour
 
 
     public Vector3[] randomPoints;
-    public float[] returnedKNeighbours;
+    public float[] returnedDistance;
+    public int[] knn;
     // Start is called before the first frame update
     void Start()
     {
+
         randomPoints = new Vector3[amountOfObjects];
-        returnedKNeighbours = new float[k];
+        returnedDistance = new float[amountOfObjects];
+        knn = new int[k];
 
         InstantiateObjects();
-        kernel = compute.FindKernel("CSMain");
-
-       
-        compute.SetInt("amountOfObjects", randomPoints.Length);
-        compute.SetVector("playerObject", playerPrefab.transform.position);
-
-        var buffer = new ComputeBuffer(randomPoints.Length, sizeof(float)*3);
-        buffer.SetData(randomPoints);
-        compute.SetBuffer(kernel,"RP", buffer);
-
-        var bufferK = new ComputeBuffer(returnedKNeighbours.Length, sizeof(float));
-        bufferK.SetData(returnedKNeighbours);
-        compute.SetBuffer(kernel, "KNeighbours", bufferK);
-
-
-        compute.Dispatch(kernel, 512 / 8, 512 / 8, 1);
-
-        buffer.GetData(randomPoints);
-        buffer.Release();
-
-        bufferK.GetData(returnedKNeighbours);
-        bufferK.Release();
+        CalculateDistance();
+        CalculateKNN();
 
 
     }
@@ -52,12 +36,64 @@ public class SampelCompute : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        //compute.SetFloat("a", alpha);
-        //compute.Dispatch(kernel, 512 / 8, 512 / 8, 1);
+
         
 
     }
+
+    public void CalculateDistance()
+    {
+
+        kernel = distanceCompute.FindKernel("CSMain");
+
+
+        distanceCompute.SetInt("amountOfObjects", randomPoints.Length);
+        distanceCompute.SetVector("playerObject", playerPrefab.transform.position);
+
+        var buffer = new ComputeBuffer(randomPoints.Length, sizeof(float) * 3);
+        buffer.SetData(randomPoints);
+        distanceCompute.SetBuffer(kernel, "RP", buffer);
+
+        var bufferD = new ComputeBuffer(returnedDistance.Length, sizeof(float));
+        bufferD.SetData(returnedDistance);
+        distanceCompute.SetBuffer(kernel, "Distance", bufferD);
+
+
+        distanceCompute.Dispatch(kernel, 512 / 8, 512 / 8, 1);
+
+        buffer.Release();
+        bufferD.GetData(returnedDistance);
+        bufferD.Release();
+
+
+    }
+
+    public void CalculateKNN()
+    {
+        kernel = returnKNNCompute.FindKernel("CSMain");
+
+        returnKNNCompute.SetInt("amountOfObjects", randomPoints.Length);
+        returnKNNCompute.SetInt("k", k);
+
+        var bufferD = new ComputeBuffer(returnedDistance.Length, sizeof(float));
+        bufferD.SetData(returnedDistance);
+        returnKNNCompute.SetBuffer(kernel, "Distance", bufferD);
+
+        var buffer = new ComputeBuffer(knn.Length, sizeof(int));
+        buffer.SetData(knn);
+        returnKNNCompute.SetBuffer(kernel, "Knn", buffer);
+
+
+        returnKNNCompute.Dispatch(kernel, 512 / 8, 512 / 8, 1);
+
+        buffer.GetData(knn);
+        buffer.Release();
+
+        bufferD.GetData(returnedDistance);
+        bufferD.Release();
+
+    }
+
 
     public void InstantiateObjects()
 
