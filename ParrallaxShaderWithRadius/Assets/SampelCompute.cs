@@ -14,7 +14,7 @@ public class SampelCompute : MonoBehaviour
     int kernel;
 
 
-
+    public GameObject[] objectPrefabs;
     public Vector3[] randomPoints;
     public float[] returnedDistance;
     public float[] returnedDistanceCopy;
@@ -28,9 +28,12 @@ public class SampelCompute : MonoBehaviour
         returnedDistanceCopy = new float[amountOfObjects];
         knn = new int[k];
 
+        objectPrefabs = new GameObject[amountOfObjects];
+
         InstantiateObjects();
         CalculateDistance();
         CalculateKNN();
+        ColorObjects();
 
 
     }
@@ -105,9 +108,18 @@ public class SampelCompute : MonoBehaviour
         for (int i = 0; i < amountOfObjects; i++)
         {
             GameObject tmp = Instantiate(objectPrefab);
-            tmp.transform.position = new Vector3(Random.Range(-5f, 5f), Random.Range(-5f, 5f), Random.Range(-5f, 5f));
+            tmp.transform.position = new Vector3(Random.Range(-5f, 5f), Random.Range(-5f, 5f), Random.Range(-0f, 0f));
             randomPoints[i] = tmp.transform.position;
+            objectPrefabs[i] = tmp;
         }
 
+    }
+
+    public void ColorObjects()
+    {
+        for (int i = 0; i < k; i++)
+        {
+            objectPrefabs[knn[i]].GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+        }
     }
 }
