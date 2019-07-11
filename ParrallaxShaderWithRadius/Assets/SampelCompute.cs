@@ -25,7 +25,7 @@ public class SampelCompute : MonoBehaviour
 
         randomPoints = new Vector3[amountOfObjects];
         returnedDistance = new float[amountOfObjects];
-        returnedDistanceCopy = new float[amountOfObjects];
+       
         knn = new int[k];
 
         objectPrefabs = new GameObject[amountOfObjects];
@@ -42,6 +42,10 @@ public class SampelCompute : MonoBehaviour
     void Update()
     {
 
+            ColorObjectsWhite();
+            CalculateDistanceDynamic();
+            CalculateKNNDynamic();
+            ColorObjects();
         
 
     }
@@ -53,7 +57,7 @@ public class SampelCompute : MonoBehaviour
 
 
         distanceCompute.SetInt("amountOfObjects", randomPoints.Length);
-        distanceCompute.SetVector("playerObject", playerPrefab.transform.position);
+        distanceCompute.SetVector("playerPos", playerPrefab.transform.position);
 
         var buffer = new ComputeBuffer(randomPoints.Length, sizeof(float) * 3);
         buffer.SetData(randomPoints);
@@ -64,14 +68,34 @@ public class SampelCompute : MonoBehaviour
         distanceCompute.SetBuffer(kernel, "Distance", bufferD);
 
 
-        distanceCompute.Dispatch(kernel, 512 / 8, 512 / 8, 1);
+        distanceCompute.Dispatch(kernel, 1, 1, 1);
 
         buffer.Release();
         bufferD.GetData(returnedDistance);
-        bufferD.GetData(returnedDistanceCopy);
+
         bufferD.Release();
+    }
 
+    public void CalculateDistanceDynamic()
+    {
 
+        distanceCompute.SetVector("playerPos", playerPrefab.transform.position);
+
+       var buffer = new ComputeBuffer(randomPoints.Length, sizeof(float) * 3);
+        buffer.SetData(randomPoints);
+        distanceCompute.SetBuffer(kernel, "RP", buffer);
+
+        var bufferD = new ComputeBuffer(returnedDistance.Length, sizeof(float));
+        bufferD.SetData(returnedDistance);
+        distanceCompute.SetBuffer(kernel, "Distance", bufferD);
+
+    
+        distanceCompute.Dispatch(kernel, 1, 1, 1);
+
+        buffer.Release();
+        bufferD.GetData(returnedDistance);
+
+        bufferD.Release();
     }
 
     public void CalculateKNN()
@@ -90,7 +114,30 @@ public class SampelCompute : MonoBehaviour
         returnKNNCompute.SetBuffer(kernel, "Knn", buffer);
 
 
-        returnKNNCompute.Dispatch(kernel, 512 / 8, 512 / 8, 1);
+        returnKNNCompute.Dispatch(kernel,  1, 1, 1);
+
+        buffer.GetData(knn);
+        buffer.Release();
+
+        bufferD.GetData(returnedDistance);
+        bufferD.Release();
+
+    }
+
+    public void CalculateKNNDynamic()
+    {
+      
+
+        var bufferD = new ComputeBuffer(returnedDistance.Length, sizeof(float));
+        bufferD.SetData(returnedDistance);
+        returnKNNCompute.SetBuffer(kernel, "Distance", bufferD);
+
+        var buffer = new ComputeBuffer(knn.Length, sizeof(int));
+        buffer.SetData(knn);
+        returnKNNCompute.SetBuffer(kernel, "Knn", buffer);
+
+
+        returnKNNCompute.Dispatch(kernel, 1, 1, 1);
 
         buffer.GetData(knn);
         buffer.Release();
@@ -115,11 +162,20 @@ public class SampelCompute : MonoBehaviour
 
     }
 
+
     public void ColorObjects()
     {
         for (int i = 0; i < k; i++)
         {
-            objectPrefabs[knn[i]].GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+            objectPrefabs[knn[i]].GetComponent<Renderer>().material.SetColor("_Color", Color.red);
+        }
+    }
+
+    public void ColorObjectsWhite()
+    {
+        for (int i = 0; i < k; i++)
+        {
+            objectPrefabs[knn[i]].GetComponent<Renderer>().material.SetColor("_Color", Color.white);
         }
     }
 }

@@ -416,11 +416,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceCompute: {fileID: 7200000, guid: 2021ea9a518ff744c863382086ea394f, type: 3}
   returnKNNCompute: {fileID: 7200000, guid: 5e0283d6aa3b34604bef41408d4f6b0f, type: 3}
-  amountOfObjects: 10
+  amountOfObjects: 50
   objectPrefab: {fileID: 589237742680566784, guid: 0bcb9f3e01efd4224810759efffaf0bb,
     type: 3}
   playerPrefab: {fileID: 1789492574}
   k: 3
+  objectPrefabs: []
   randomPoints:
   - {x: 0, y: 0, z: 1.8727951e+31}
   - {x: 4, y: 3, z: 1e-45}

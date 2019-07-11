@@ -24,7 +24,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         
     }
     
-    Distance[comparisonIndex]=clicks;
+    //Distance[comparisonIndex]=clicks;
     if(clicks>=amountOfObjects - k){
         Knn[amountOfObjects - (clicks+1)] = comparisonIndex;
        }  
