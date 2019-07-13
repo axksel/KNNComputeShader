@@ -1,2 +1,2 @@
-# ParrallaxShaderWithRadius
-A parrallax shader with radius in world positions
+# KNNComputeShader
+A attempt at a KNN Compute shader
